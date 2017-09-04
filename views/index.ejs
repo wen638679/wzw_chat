@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>CHAT</title>
+    <link href="./css/index.css" rel="stylesheet" type="text/css"/>
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+        var socket;
+        var account;
+        var message;
+        var messageElement;
+        var contentListConElement;
+        function getCookie(name)
+        {
+            let start;
+            let end;
+            let cookie = document.cookie;
+            if((start = cookie.indexOf(name))!=-1){
+                if((end = cookie.indexOf(';',start+1))!=-1){
+                    return cookie.substring(start+1+name.length,end);
+                }else {
+                    return cookie.substr(start+1+name.length);
+                }
+            }else{
+                return null;
+            }
+        }
+
+        function getTime(time){
+            let date = new Date(time);
+            let year = date.getFullYear();
+            let month = date.getMonth()+1;
+            let day = date.getDay();
+            let hour = date.getHours();
+            let minutes = date.getMinutes();
+            let seconds = date.getSeconds();
+            return `${year}/${month}/${day} ${hour}:${minutes}:${seconds}`;
+        }
+
+        function addOrOutUser(value){
+            let divElement = document.createElement('div');
+            let spanElment = document.createElement('span');
+            spanElment.innerHTML = value;
+            divElement.id = 'addOrOutUser';
+            divElement.appendChild(spanElment);
+            contentListConElement.appendChild(divElement);
+        }
+
+        function sendMySelf(content){
+            let divElement = document.createElement('div');
+            let infoElement = document.createElement('div');
+            let msgElement = document.createElement('div');
+            let userElement = document.createElement('span');
+            let timeElement = document.createElement('span');
+            let messageElement = document.createElement('span');
+            divElement.classList = ['send_content'];
+            infoElement.classList = ['info_content_mySelf'];
+            userElement.classList = ['info_content_user'];
+            timeElement.classList = ['info_content_time'];
+            msgElement.classList = ['message_content_mySelf'];
+            userElement.innerHTML = content.account;
+            timeElement.innerHTML = getTime(content.time);
+            messageElement.innerHTML = content.message;
+            infoElement.appendChild(timeElement);
+            infoElement.appendChild(userElement);
+            msgElement.appendChild(messageElement);
+            divElement.appendChild(infoElement);
+            divElement.appendChild(msgElement);
+            contentListConElement.appendChild(divElement);
+        }
+
+        function sendOtherSelf(content){
+            let divElement = document.createElement('div');
+            let infoElement = document.createElement('div');
+            let msgElement = document.createElement('div');
+            let userElement = document.createElement('span');
+            let timeElement = document.createElement('span');
+            let messageElement = document.createElement('span');
+            divElement.classList = ['send_content'];
+            infoElement.classList = ['info_content_otherSelf'];
+            userElement.classList = ['info_content_user'];
+            timeElement.classList = ['info_content_time'];
+            msgElement.classList = ['message_content_otherSelf'];
+            userElement.innerHTML = content.account;
+            timeElement.innerHTML = getTime(content.time);
+            messageElement.innerHTML = content.message;
+            infoElement.appendChild(userElement);
+            infoElement.appendChild(timeElement);
+            msgElement.appendChild(messageElement);
+            divElement.appendChild(infoElement);
+            divElement.appendChild(msgElement);
+            contentListConElement.appendChild(divElement);
+        }
+
+        function load(){
+            messageElement = document.getElementById('message');
+            contentListConElement = document.getElementById('content_list_con')
+            socket = io.connect('ws://localhost:8088');
+            account = getCookie('account');
+            console.log(account);
+            socket.on('online',(value)=>{
+                addOrOutUser(value)
+            });
+            socket.on('send_msg',(content)=>{
+                if(content.account == account){
+                    sendMySelf(content)
+                }else{
+                    sendOtherSelf(content);
+                }
+            });
+            socket.on('disconnect',(value)=>{
+                addOrOutUser(value);
+            })
+            socket.emit('online',account);
+        }
+
+        function changeMessage(event){
+            message = event.target.value;
+        }
+
+        function sendMsg(){
+            socket.emit('send_msg',message);
+            message = '';
+            messageElement.value = message;
+        }
+
+        function cancelMsg(){
+            message = '';
+            messageElement.value = message;
+        }
+    </script>
+</head>
+<body onload="load()">
+    <div id="chat">
+        <div id="title">
+            <h2>聊天室</h2>
+        </div>
+        <div id="content">
+            <div id="content_list">
+                <div class="con_title">
+                    <h4>信息列表</h4>
+                </div>
+                <div id="content_list_con">
+
+                </div>
+                <div id="con_send">
+                    <div id="send_input">
+                        <textarea id="message"
+                            oninput="changeMessage(event)"></textarea>
+                    </div>
+                    <div id="send_but">
+                        <div class="but"
+                            onclick="sendMsg()">
+                            <span>发送</span>
+                        </div>
+                        <div class="but"
+                            onclick="cancelMsg()">
+                            <span>取消</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div id="content_other">
+                <div id="content_room">
+                    <div class="con_title">
+                        <h4>房间列表</h4>
+                    </div>
+                    <div></div>
+                </div>
+                <div id="content_member">
+                    <div class="con_title">
+                        <h4>成员列表</h4>
+                    </div>
+                    <div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

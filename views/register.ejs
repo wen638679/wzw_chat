@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>注册</title>
+    <link href="./css/register.css" type="text/css" rel="stylesheet">
+    <script src="./js/register.js"></script>
+</head>
+<body>
+    <div id="container">
+        <div id="title">
+            <h2>注册</h2>
+        </div>
+        <div id="content">
+            <div class="con_item">
+                <span>账号</span>
+                <input oninput="changeUsername(event)"/>
+            </div>
+            <div class="con_item">
+                <span>密码</span>
+                <input oninput="changePassword(event)"/>
+            </div>
+            <div class="con_item">
+                <span>确认密码</span>
+                <input oninput="changeConfirm(event)"/>
+            </div>
+        </div>
+        <div id="but" onclick="register()">
+            <span>注册</span>
+        </div>
+    </div>
+</body>
+</html>

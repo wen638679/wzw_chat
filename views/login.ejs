@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link type="text/css" rel="stylesheet" href="./css/login.css"/>
+    <script src="./js/login.js"></script>
+</head>
+<body>
+    <div>
+        <div class="container">
+            <div id="title">
+                <h2>登录</h2>
+            </div>
+            <div id="content">
+                <div class="content_item"
+                    oninput="changeUsername(event)">
+                    <span>用户名</span>
+                    <input/>
+                </div>
+                <div class="content_item"
+                    oninput="changePassword(event)">
+                    <span>密码</span>
+                    <input/>
+                </div>
+                <div id="but">
+                    <div id="but_login"
+                        onclick="login()">
+                        <span>登录</span>
+                    </div>
+                    <div id="storck"></div>
+                    <div id="but_register"
+                        onclick="register()">
+                        <span>注册</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>
